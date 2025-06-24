@@ -16,5 +16,3 @@ pip install yt_dlp
 - Go to: [https://www.gyan.dev/ffmpeg/builds/](https://www.gyan.dev/ffmpeg/builds/)
 - Download `ffmpeg-release-essentials.zip`
 - Extract it and add the `bin` folder to your system PATH
-
-Extract it and add the bin folder to your system PATH
