@@ -2,7 +2,7 @@ import os
 import yt_dlp
 
 VIDEO_URLS = [
-    "https://www.youtube.com/watch?v=AIPYd3hfzwg"
+    "" # insert youtube_video_link here
 ]
 SAVE_DIR = "clips"
 

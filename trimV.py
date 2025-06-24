@@ -6,7 +6,7 @@ output_folder = "trimmed_videos"
 os.makedirs(output_folder, exist_ok=True)
 
 trim_segments = {
-    "Crunches.mp4": [(34, 38), (58, 60), (65, 67), (173, 181)],
+    "video_name.mp4": [('start', 'end'), ('start', 'end'), ('start', 'end'), ('start', 'end')], # Insert video name in the 'video_name' 
 }
 
 for video_name, segments in trim_segments.items():

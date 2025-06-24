@@ -2,8 +2,8 @@ import os
 import shutil
 import csv
 
-
-mistake_dir = "trimmed_videos/mistakes"
+# Separate Mistakes and Perfect folder and cut-paste mistakes videos and Perfect video in the respected directory
+mistake_dir = "trimmed_videos/mistakes" 
 perfect_dir = "trimmed_videos/perfect"
 
 dataset_dir = "dataset"
