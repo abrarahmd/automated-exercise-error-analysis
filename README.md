@@ -10,6 +10,7 @@ A simple Python snippet to download and trim YouTube videos using `yt_dlp` and `
 
 ```bash
 pip install yt_dlp
+pip install ffmpeg-python
 ```
 ### 2. Download FFmpeg
 
