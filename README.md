@@ -35,7 +35,6 @@ Automated Exercise Error Analysis/
 │
 ├── python/ 
 ├── ffmpeg/
-├── yt_clips_text_removed/ # Processed user clips (text removed)
 ├── yt_download.py # Script to download YouTube videos
 ├── yt_trim.py # Script to trim downloaded videos
 ├── rm_txt.py # Script to remove text from clips
