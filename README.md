@@ -22,7 +22,7 @@ Then install required packages:
 ```bash
 pip install yt_dlp
 pip install ffmpeg-python
-``
+```
 ### 2. 🧰 Install FFmpeg
 1. Go to https://www.gyan.dev/ffmpeg/builds/
 2. Download ffmpeg-release-essentials.zip 
