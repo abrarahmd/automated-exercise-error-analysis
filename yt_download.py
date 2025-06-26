@@ -2,9 +2,9 @@ import os
 import yt_dlp
 
 VIDEO_URLS = [
-    "" # insert youtube_video_link here
+    "https://www.youtube.com/watch?v=AIPYd3hfzwg&themeRefresh=1" 
 ]
-SAVE_DIR = "clips"
+SAVE_DIR = "yt_clips_downloaded"
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 
