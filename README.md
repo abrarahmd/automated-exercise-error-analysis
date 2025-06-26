@@ -29,17 +29,13 @@ pip install ffmpeg-python
 3. Extract it and rename the folder to ffmpeg
 4. Add the ffmpeg/bin directory to your system PATH.
 ---
-## 📁 Folder Structure (after setup)
+## 📁 Folder Structure
 ```
 Automated Exercise Error Analysis/
 │
-├── python/ # Python 3.9 environment folder
-├── ffmpeg/ # FFmpeg binary folder (with bin/ in PATH)
+├── python/ 
+├── ffmpeg/
 ├── yt_clips_text_removed/ # Processed user clips (text removed)
-├── reference/ # Folder for reference workout videos
-├── user_videos/ # Folder for user workout clips
-├── keypoints/ # Extracted pose keypoints
-│
 ├── yt_download.py # Script to download YouTube videos
 ├── yt_trim.py # Script to trim downloaded videos
 ├── rm_txt.py # Script to remove text from clips
