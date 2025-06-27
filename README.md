@@ -53,7 +53,6 @@ Then rename the downloaded video to ytv_downloaded.mp4
 ```bash
 python yt_trim.py
 ```
-Then rename the trimmed clips according to the exercise types/mistakes.
 ```bash
 pip install numpy==1.24.4
 pip install opencv-python easyocr
