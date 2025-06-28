@@ -60,5 +60,6 @@ python rm_txt.py
 ```
 ```bash
 pip install mediapipe
+pip install python-dotenv
 python main.py
 ```
