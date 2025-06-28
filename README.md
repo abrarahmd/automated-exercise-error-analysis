@@ -58,6 +58,7 @@ pip install numpy==1.24.4
 pip install opencv-python easyocr
 python rm_txt.py
 ```
+create .env file and store your groq api key there.
 ```bash
 pip install mediapipe
 pip install python-dotenv
