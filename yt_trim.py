@@ -30,7 +30,7 @@ for video_name, segments in trim_segments.items():
             (
                 ffmpeg.input(input_path, ss=start, t=duration) \
                 .output(out_path, codec='libx264', preset='fast', movflags='faststart') \
-                .run(cmd=r"D:\Automated Exercise Error Analysis\ffmpeg\bin\ffmpeg.exe", overwrite_output=True)
+                .run(overwrite_output=True)
 
             )
         except ffmpeg.Error as e:
