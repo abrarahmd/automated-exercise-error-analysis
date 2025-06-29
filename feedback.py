@@ -25,7 +25,6 @@ def extract_keypoints(video_path, save_path):
 
     cap.release()
     np.save(save_path, np.array(keypoints_all))
-    print(f"Saved keypoints to {save_path}")
 
 def compare_keypoints(reference_path, user_path, threshold=0.1):
     ref = np.load(reference_path)
