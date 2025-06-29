@@ -41,7 +41,7 @@ Keep it short and actionable."""
                 {"role": "user", "content": prompt}
             ],
             temperature=0.1,
-            max_tokens=100,
+            max_tokens=200,
             stop=["\n\n"]
         )
 
