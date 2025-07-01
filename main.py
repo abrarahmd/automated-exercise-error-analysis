@@ -14,19 +14,27 @@ def get_llm_feedback(reference_name, error_summary):
     if not error_summary:
         return "No significant form issues detected."
     
-    prompt = f"""Analyze {reference_name} form errors. Be VERY concise.
+    prompt = f"""You are a professional fitness coach helping people fix their form during exercises.
 
-Detected issues:
+The user performed the workout: {reference_name}
+
+The pose analyzer detected these joint-level issues over multiple frames:
 {chr(10).join(error_summary)}
 
-For each RELEVANT issue (ignore face/fingers), give:
-- Issue name
-- Quick fix (1 sentence max)
+Your task is:
+1. Summarize these technical errors into 2–3 high-level, human-friendly feedback points.
+2. Group related issues (like knees and ankles) into a single point if possible.
+3. Focus on functional mistakes, e.g., "neck pulling", "feet not planted", "elbows flaring", etc.
 
-Format: "Issue: Fix"
-Example: "Elbow flaring: Keep elbows closer to body"
+Format your answer with:
+- A short mistake name
+- A clear one-sentence fix
 
-Keep it short and actionable."""
+Example:
+Neck pulling — Avoid pulling with your head; keep your neck relaxed.
+
+Now write only the list of summarized feedback below:
+"""
 
     try:
         client = openai.OpenAI(
@@ -37,11 +45,11 @@ Keep it short and actionable."""
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
-                {"role": "system", "content": "You are a concise fitness coach. Give short, actionable form corrections only."},
+                {"role": "system", "content": "You are a concise fitness coach. Group and summarize body part issues into meaningful form feedback."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.1,
-            max_tokens=200,
+            temperature=0.3,
+            max_tokens=300,
             stop=["\n\n"]
         )
 
@@ -50,6 +58,7 @@ Keep it short and actionable."""
     except Exception as e:
         print(f"Error in LLM API call: {e}")
         return "Unable to generate feedback due to API error."
+
 
 os.makedirs("keypoints", exist_ok=True)
 source_folder = "yt_clips_text_removed"
@@ -107,6 +116,7 @@ for user_video in user_videos:
         extract_keypoints(user_video, user_key_path)
         errors = compare_keypoints(reference_keypoints, user_key_path)
         summary = summarize_mistakes(errors, total_frames=len(errors), min_frame_threshold=5)
+        print(summary)
 
         if summary:
 
