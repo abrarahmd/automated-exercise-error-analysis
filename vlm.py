@@ -1,9 +1,7 @@
 import openai
 import base64
-import requests
 from io import BytesIO
 from PIL import Image
-
 
 def encode_image(image_path):
     img = Image.open(image_path)
@@ -27,62 +25,55 @@ learner_imgs = [
 openai.base_url = "http://172.16.4.134:11434/v1/"
 openai.api_key = 'ollama'
 
+
 content = [
     {
         "type": "text",
         "text": (
-            "You will be shown six images:\n"
-            "Trainer Image 1\n"
-            "Trainer Image 2\n"
-            "Trainer Image 3\n"
-            "Learner Image 1\n"
-            "Learner Image 2\n"
-            "Learner Image 3\n\n"
-            "Compare the learner's posture and movement in each frame with the trainer's. "
-            "List the mistakes or differences in form, balance, or position. "
-            "Provide feedback in numbered points."
+            "You are a certified fitness trainer evaluating a user's sit-up technique.\n\n"
+            "You will be shown six labeled images:\n"
+            "Image 1: Trainer Start\n"
+            "Image 2: Trainer Middle\n"
+            "Image 3: Trainer End\n"
+            "Image 4: Learner Start\n"
+            "Image 5: Learner Middle\n"
+            "Image 6: Learner End\n\n"
+            "Compare the learner's form and movement to the trainer's across the sequence.\n"
+            "Identify any differences in posture, alignment, balance, or movement quality.\n"
+            "Highlight specific mistakes — such as pulling on the neck, using momentum, or misalignments — that may impact performance or risk injury.\n"
+            "Give clear feedback in numbered points, connected across all frames."
         ),
     }
 ]
 
-for i, img_b64 in enumerate(trainer_imgs):
-    content.append({
-        "type": "image_url",
-        "image_url": {
-            "url": f"data:image/jpeg;base64,{img_b64}",
-            "detail": f"Trainer Image {i+1}"
-        }
-    })
 
-for i, img_b64 in enumerate(learner_imgs):
+trainer_labels = ["Trainer Start", "Trainer Middle", "Trainer End"]
+for i, (img_b64, label) in enumerate(zip(trainer_imgs, trainer_labels)):
+    content.append({"type": "text", "text": f"Image {i+1}: {label}"})
     content.append({
         "type": "image_url",
-        "image_url": {
-            "url": f"data:image/jpeg;base64,{img_b64}",
-            "detail": f"Learner Image {i+1}"
-        }
+        "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}
     })
 
 
+learner_labels = ["Learner Start", "Learner Middle", "Learner End"]
+for i, (img_b64, label) in enumerate(zip(learner_imgs, learner_labels), start=4):
+    content.append({"type": "text", "text": f"Image {i}: {label}"})
+    content.append({
+        "type": "image_url",
+        "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}
+    })
 
-for i in range(3):
-    response = openai.chat.completions.create(
-        model="qwen2.5vl:latest",
-        messages=[{
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": (
-                        f"Compare the following two images:\n"
-                        f"Image A (Trainer Frame {i+1}) and Image B (Learner Frame {i+1}).\n"
-                        "Identify any mistakes or posture differences."
-                    )
-                },
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{trainer_imgs[i]}" }},
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{learner_imgs[i]}" }},
-            ],
-        }],
-        max_tokens=1024,
-    )
-    print(f"\n💬 Comparison for Frame {i+1}:\n", response.choices[0].message.content)
+
+response = openai.chat.completions.create(
+    model="qwen2.5vl:latest",
+    messages=[{
+        "role": "user",
+        "content": content,
+    }],
+    max_tokens=1024,
+    temperature=0.1,
+    top_p=0.001,
+)
+
+print("📋 Overall Feedback:\n", response.choices[0].message.content)
