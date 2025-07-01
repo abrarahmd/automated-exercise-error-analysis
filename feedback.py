@@ -3,6 +3,34 @@ import cv2
 import mediapipe as mp
 import os
 
+# List of joint indices you want to use
+SELECTED_JOINTS = [
+    0, 7, 8,
+    11, 12, 13, 14, 15, 16,
+    23, 24, 25, 26, 27, 28, 29, 30
+]
+
+# Mapping from joint index to readable name
+JOINT_NAMES = {
+    0: "nose",
+    7: "left ear",
+    8: "right ear",
+    11: "left shoulder",
+    12: "right shoulder",
+    13: "left elbow",
+    14: "right elbow",
+    15: "left wrist",
+    16: "right wrist",
+    23: "left hip",
+    24: "right hip",
+    25: "left knee",
+    26: "right knee",
+    27: "left ankle",
+    28: "right ankle",
+    29: "left heel",
+    30: "right heel"
+}
+
 def extract_keypoints(video_path, save_path):
     mp_pose = mp.solutions.pose
     keypoints_all = []
@@ -17,9 +45,10 @@ def extract_keypoints(video_path, save_path):
             results = pose.process(image_rgb)
 
             if results.pose_landmarks:
-                keypoints = [(lm.x, lm.y, lm.z, lm.visibility) for lm in results.pose_landmarks.landmark]
+                landmarks = results.pose_landmarks.landmark
+                keypoints = [(landmarks[i].x, landmarks[i].y, landmarks[i].z, landmarks[i].visibility) for i in SELECTED_JOINTS]
             else:
-                keypoints = [(0, 0, 0, 0)] * 33
+                keypoints = [(0, 0, 0, 0)] * len(SELECTED_JOINTS)
 
             keypoints_all.append(keypoints)
 
@@ -38,51 +67,16 @@ def compare_keypoints(reference_path, user_path, threshold=0.1):
 
     for f in range(min_len):
         frame_errors = []
-        for j in range(33):
+        for j in range(len(SELECTED_JOINTS)):
             rx, ry, rz, _ = ref[f][j]
             ux, uy, uz, _ = usr[f][j]
             dist = np.sqrt((rx - ux)**2 + (ry - uy)**2 + (rz - uz)**2)
             if dist > threshold:
-                frame_errors.append((j, dist))
+                joint_id = SELECTED_JOINTS[j]
+                frame_errors.append((joint_id, dist))
         joint_errors.append(frame_errors)
 
     return joint_errors
-
-JOINTS = {
-    0: "nose",
-    1: "left eye inner",
-    2: "left eye",
-    3: "left eye outer",
-    4: "right eye inner",
-    5: "right eye",
-    6: "right eye outer",
-    7: "left ear",
-    8: "right ear",
-    9: "mouth left",
-    10: "mouth right",
-    11: "left shoulder",
-    12: "right shoulder",
-    13: "left elbow",
-    14: "right elbow",
-    15: "left wrist",
-    16: "right wrist",
-    17: "left pinky",
-    18: "right pinky",
-    19: "left index",
-    20: "right index",
-    21: "left thumb",
-    22: "right thumb",
-    23: "left hip",
-    24: "right hip",
-    25: "left knee",
-    26: "right knee",
-    27: "left ankle",
-    28: "right ankle",
-    29: "left heel",
-    30: "right heel",
-    31: "left foot index",
-    32: "right foot index"
-}
 
 def summarize_mistakes(errors, total_frames=None, min_frame_threshold=5):
     joint_counts = {}
@@ -93,7 +87,7 @@ def summarize_mistakes(errors, total_frames=None, min_frame_threshold=5):
     result = []
     for joint_id, count in sorted(joint_counts.items(), key=lambda x: -x[1]):
         if count >= min_frame_threshold:
-            joint_name = JOINTS.get(joint_id, f"joint {joint_id}")
+            joint_name = JOINT_NAMES.get(joint_id, f"joint {joint_id}")
             if total_frames:
                 percentage = (count / total_frames) * 100
                 result.append(f"- {joint_name} misaligned in {count} frames ({percentage:.1f}%)")

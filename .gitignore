@@ -9,3 +9,6 @@ keypoints/
 __pycache__/
 yt_clips_text_removed/
 .env
+visualizations/
+reduced_480p/
+frames_all/

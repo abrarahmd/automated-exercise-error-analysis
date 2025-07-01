@@ -1,12 +1,12 @@
 import os
 import ffmpeg
 
-input_folder = "yt_clips_downloaded"
-output_folder = "yt_clips_trimmed"
+input_folder = "reduced_480p"
+output_folder = "reduced_480p"
 os.makedirs(output_folder, exist_ok=True)
 
 trim_segments = {
-    "ytv_downloaded.mp4": [('34', '38'), ('59', '61'), ('67', '69'), ('173', '176')],
+    "reference_proper_480p.mp4": [('0', '4')],
 }
 
 for video_name, segments in trim_segments.items():

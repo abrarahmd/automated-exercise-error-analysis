@@ -76,7 +76,7 @@ videos = [f for f in os.listdir(source_folder) if f.endswith(".mp4")]
 
 for video in videos:
     src_path = os.path.join(source_folder, video)
-    if video == "proper_crunches.mp4":
+    if video == "proper_crunches_5fps.mp4":
         dst_path = os.path.join(reference_folder, video)
     else:
         dst_path = os.path.join(user_video_folder, video)
@@ -86,11 +86,11 @@ for video in videos:
     except Exception as e:
         print(f"Error moving {video}: {e}")
 
-reference_video = os.path.join(reference_folder, "proper_crunches.mp4")
-reference_keypoints = os.path.join("keypoints", "reference_proper.npy")
+reference_video = os.path.join(reference_folder, "proper_crunches_5fps.mp4")
+reference_keypoints = os.path.join("keypoints", "reference_proper_5fps.npy")
 
 if not os.path.exists(reference_video):
-    print("Error: Reference video 'proper_crunches.mp4' not found!")
+    print("Error: Reference video 'proper_crunches_5fps.mp4' not found!")
     exit(1)
 
 if not os.path.exists(reference_keypoints):
@@ -120,7 +120,7 @@ for user_video in user_videos:
 
         if summary:
 
-            feedback = get_llm_feedback("proper_crunches", summary)
+            feedback = get_llm_feedback("proper_crunches_5fps", summary)
             print("\nAI Workout Feedback:")
             print("-" * 40)
             print(feedback)

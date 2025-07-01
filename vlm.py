@@ -17,12 +17,12 @@ trainer_imgs = [
 ]
 
 learner_imgs = [
-    encode_image("user_videos/userFirst_1.jpg"),
-    encode_image("user_videos/userFirst_2.jpg"),
-    encode_image("user_videos/userFirst_3.jpg"),
+    encode_image("user_videos/pulling_neck_1.jpg"),
+    encode_image("user_videos/pulling_neck_2.jpg"),
+    encode_image("user_videos/pulling_neck_3.jpg"),
 ]
 
-openai.base_url = "http://172.16.4.134:11434/v1/"
+openai.base_url = "http://172.16.7.83:11434/v1/"
 openai.api_key = 'ollama'
 
 
@@ -66,7 +66,7 @@ for i, (img_b64, label) in enumerate(zip(learner_imgs, learner_labels), start=4)
 
 
 response = openai.chat.completions.create(
-    model="qwen2.5vl:latest",
+    model="qwen2.5vl:32b",
     messages=[{
         "role": "user",
         "content": content,
@@ -76,4 +76,4 @@ response = openai.chat.completions.create(
     top_p=0.001,
 )
 
-print("📋 Overall Feedback:\n", response.choices[0].message.content)
+print("Overall Feedback:\n", response.choices[0].message.content)
