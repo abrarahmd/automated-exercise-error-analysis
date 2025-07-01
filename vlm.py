@@ -1,68 +1,88 @@
+import openai
 import base64
-from pathlib import Path
 import requests
+from io import BytesIO
+from PIL import Image
 
 
-def encode_images_to_base64(folder_path):
-    base64_images = {}
-    for image_path in sorted(Path(folder_path).glob("*.jpg")):
-        with open(image_path, "rb") as img_file:
-            encoded_string = base64.b64encode(img_file.read()).decode("utf-8")
-            base64_images[image_path.stem] = encoded_string
-    return base64_images
+def encode_image(image_path):
+    img = Image.open(image_path)
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 
+trainer_imgs = [
+    encode_image("reference/trainer_1.jpg"),
+    encode_image("reference/trainer_2.jpg"),
+    encode_image("reference/trainer_3.jpg"),
+]
 
+learner_imgs = [
+    encode_image("user_videos/userFirst_1.jpg"),
+    encode_image("user_videos/userFirst_2.jpg"),
+    encode_image("user_videos/userFirst_3.jpg"),
+]
 
-def build_multi_frame_message(trainer_images, learner_images, max_frames=3):
-    shared_keys = sorted(set(trainer_images) & set(learner_images))
-    shared_keys = shared_keys[:max_frames]  # Limit to avoid token overflow
+openai.base_url = "http://172.16.4.134:11434/v1/"
+openai.api_key = 'ollama'
 
-    content = [
-        {
-            "type": "text",
-            "text": f"Compare the learner's pose to the trainer's pose in the following {len(shared_keys)} frames. Identify any mistakes in the learner’s form and explain clearly what is wrong in each frame."
+content = [
+    {
+        "type": "text",
+        "text": (
+            "You will be shown six images:\n"
+            "Trainer Image 1\n"
+            "Trainer Image 2\n"
+            "Trainer Image 3\n"
+            "Learner Image 1\n"
+            "Learner Image 2\n"
+            "Learner Image 3\n\n"
+            "Compare the learner's posture and movement in each frame with the trainer's. "
+            "List the mistakes or differences in form, balance, or position. "
+            "Provide feedback in numbered points."
+        ),
+    }
+]
+
+for i, img_b64 in enumerate(trainer_imgs):
+    content.append({
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/jpeg;base64,{img_b64}",
+            "detail": f"Trainer Image {i+1}"
         }
-    ]
+    })
 
-    for key in shared_keys:
-        content.extend([
-            {"type": "text", "text": f"🖼 Frame {key}:"},
-            {"type": "text", "text": "Trainer:"},
-            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{trainer_images[key]}" }},
-            {"type": "text", "text": "Learner:"},
-            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{learner_images[key]}" }},
-        ])
-
-    return [{
-        "role": "user",
-        "content": content
-    }]
+for i, img_b64 in enumerate(learner_imgs):
+    content.append({
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/jpeg;base64,{img_b64}",
+            "detail": f"Learner Image {i+1}"
+        }
+    })
 
 
-# Load images
-trainer_images = encode_images_to_base64("reference")
-learner_images = encode_images_to_base64("user_videos")
 
-# Build messages
-messages = build_multi_frame_message(trainer_images, learner_images, max_frames=3)
-
-# API endpoint and headers
-api = "http://172.16.4.134:11434/v1/"
-api_key = "ollama"
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}",
-}
-
-# Payload with built messages
-payload = {
-    "model": "hf.co/Mungert/Qwen2.5-VL-7B-Instruct-GGUF:Q4_K_M",
-    "messages": messages,
-    "max_tokens": 1024,
-    "temperature": 0.1,
-    "top_p": 0.95,
-}
-
-response = requests.post(api, headers=headers, json=payload)
-print(response.json() if response.ok else response.text)
+for i in range(3):
+    response = openai.chat.completions.create(
+        model="qwen2.5vl:latest",
+        messages=[{
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": (
+                        f"Compare the following two images:\n"
+                        f"Image A (Trainer Frame {i+1}) and Image B (Learner Frame {i+1}).\n"
+                        "Identify any mistakes or posture differences."
+                    )
+                },
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{trainer_imgs[i]}" }},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{learner_imgs[i]}" }},
+            ],
+        }],
+        max_tokens=1024,
+    )
+    print(f"\n💬 Comparison for Frame {i+1}:\n", response.choices[0].message.content)

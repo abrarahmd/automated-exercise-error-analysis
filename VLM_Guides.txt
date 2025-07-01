@@ -1,0 +1,3 @@
+Run -> extract_keyframe.py
+       vlm.py
+Output pasted in: output.txt
