@@ -43,9 +43,11 @@ def generate_prompt():
             "Each comparison contains 3 reference frames (proper workout) and 3 user frames.\n\n"
             "Reference: Start, Middle, End\n"
             "User: Start, Middle, End\n\n"
-            "Compare them. Mention any errors the user makes.\n"
+            "Compare them. Mention a detailed comparison.\n"
+            "Generate user instructions.\n"
             "Focus on overall patterns like pulling neck, tucking chin, using momentum, poor alignment.\n"
             "Be concise. Format like: 'Mistake: Explanation'"
+
         )
     }
 
