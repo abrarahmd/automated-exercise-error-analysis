@@ -46,7 +46,8 @@ def generate_prompt():
             "Compare them. Mention a detailed comparison.\n"
             "Generate user instructions.\n"
             "Focus on overall patterns like pulling neck, tucking chin, using momentum, poor alignment.\n"
-            "Be concise. Format like: 'Mistake: Explanation'"
+            "Be concise. Format like: 'Mistake: Explanation'\n"
+            "Word counts should be around 100-200 words.\n"
 
         )
     }
