@@ -35,25 +35,23 @@ def get_segments(frames, segment_count=3):
 def extract_segment_b64(image_paths):
     return [encode_image(p) for p in image_paths]
 
-def generate_prompt():
+def generate_prompt(exercise_name):
     return {
         "type": "text",
         "text": (
-            "You are a certified fitness trainer evaluating different kind of workout. Based on the reference frames, figure it out what kind of workout is this.\n\n"
-            "Each comparison contains 3 reference frames (proper workout) and 3 user frames.\n\n"
-            "Reference: Start, Middle, End\n"
-            "User: Start, Middle, End\n\n"
-            "Compare them. Mention a detailed comparison.\n"
-            "Generate user instructions.\n"
-            "Focus on overall patterns like pulling neck, tucking chin, using momentum, poor alignment.\n"
-            "Be concise. Format like: 'Mistake: Explanation'\n"
-            "Word counts should be around 100-200 words.\n"
-
+            f"You are a certified fitness trainer evaluating a **{exercise_name}**.\n\n"
+            "You will see a sequence of reference frames (proper form) followed by a sequence of user frames (actual performance).\n\n"
+            "Your response must have exactly **two paragraphs**:\n"
+            "1. The first paragraph should identify the type of workout, assess posture, control, timing, and alignment, and compare the user sequence to the reference. "
+            "Highlight common mistakes (e.g., pulling neck, tucking chin, using momentum, poor alignment). Be clear and concise.\n"
+            "2. The second paragraph should give actionable instructions to help the user perform the movement correctly, using direct and instructional language.\n\n"
+            "Keep the total response around 200 words each paragraph. Do not use bullet points. Be direct, efficient, and professional."
         )
     }
 
-def run_llm(reference_b64s, user_b64s):
-    content = [generate_prompt()]
+
+def run_llm(reference_b64s, user_b64s, exercise_name):
+    content = [generate_prompt(exercise_name)]
 
     for i, b64 in enumerate(reference_b64s):
         content.append({"type": "text", "text": f"Reference Frame {i+1}"})
@@ -86,6 +84,9 @@ reference_frames = sorted(glob.glob(os.path.join(reference_dir, "*.jpg")))
 ref_segments = get_segments(reference_frames, segment_count=3)
 ref_b64_segments = [extract_segment_b64(seg) for seg in ref_segments]
 
+content = input("Enter the exercise name: ")
+
+
 for user_dir in user_dirs:
     user_name = os.path.basename(user_dir)
     user_frames = sorted(glob.glob(os.path.join(user_dir, "*.jpg")))
@@ -96,7 +97,7 @@ for user_dir in user_dirs:
     user_set = sum(user_b64_segments, [])[:3]
 
     print(f"\nAnalyzing: {user_name}")
-    feedback = run_llm(reference_set, user_set)
+    feedback = run_llm(reference_set, user_set, exercise_name=content)
 
     with open(os.path.join(OUTPUT_DIR, f"{user_name}_feedback.txt"), "w") as f:
         f.write(feedback)
