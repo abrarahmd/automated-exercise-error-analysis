@@ -16,28 +16,29 @@ A simple end-to-end Python pipeline to:
 1. Create a folder named `python/` in your project directory.  
 2. Install **Python 3.9** in that folder (use [official Python site](https://www.python.org/downloads/release/python-390/)).  
 3. Activate your virtual environment.
+```bash
+python/python -m venv venv
+venv\Scripts\Activate.ps1          
+```
 
 Then install required packages:
 
 ```bash
-pip install yt_dlp
 pip install ffmpeg-python
 ```
 ### 2. 🧰 Install FFmpeg
 1. Go to https://www.gyan.dev/ffmpeg/builds/
 2. Download ffmpeg-release-essentials.zip 
-3. Extract it and rename the folder to ffmpeg
-4. Add the ffmpeg/bin directory to your system PATH.
+3. Extract it and add the ffmpeg/bin directory to your system PATH.
 ---
 ## 📁 Folder Structure
 ```
 Automated Exercise Error Analysis/
 │
-├── python/ 
+├── python/
+├──
+├──
 ├── ffmpeg/
-├── yt_download.py # Script to download YouTube videos
-├── yt_trim.py # Script to trim downloaded videos
-├── rm_txt.py # Script to remove text from clips
 ├── main.py # Main analysis script
 ├── extract_pose.py
 ├── compare.py
@@ -46,21 +47,14 @@ Automated Exercise Error Analysis/
 ```
 ---
 ## 🚀 Pipeline Execution
-```bash
-python yt_download.py
-```
-Then rename the downloaded video to ytv_downloaded.mp4
-```bash
-python yt_trim.py
-```
+
 ```bash
 pip install numpy==1.24.4
 pip install opencv-python easyocr
-python rm_txt.py
 ```
 create .env file and store your groq api key there.
 ```bash
 pip install mediapipe
 pip install python-dotenv
-python main.py
 ```
+
