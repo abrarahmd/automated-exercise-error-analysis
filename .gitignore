@@ -1,5 +1,5 @@
 python/
-ffmpeg/
+ffmpeg-7.1.1-essentials_build/
 venv/
 yt_clips_downloaded/
 yt_clips_trimmed/
@@ -8,7 +8,10 @@ reference/
 keypoints/
 __pycache__/
 yt_clips_text_removed/
-.env
 visualizations/
 reduced_480p/
 frames_all/
+yt_trim.py
+rm_txt.py
+yt_download.py
+clips/
