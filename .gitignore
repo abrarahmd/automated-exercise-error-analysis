@@ -14,4 +14,7 @@ frames_all/
 yt_trim.py
 rm_txt.py
 yt_download.py
-clips/
+clips/converted/
+workout_feedback/
+final_frames/
+final_videos/
