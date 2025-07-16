@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> 
+  <title>Workout Analysis</title> 
+  <style>
+  #video {
+    display: none; /* hide the raw webcam video */
+  }
+</style>
+</head>
+<body>
+  <video id="video" width="640" height="480" autoplay></video> <!-- Webcam video feed -->
+  <canvas id="canvas" width="640" height="480"></canvas> <!-- Canvas for drawing -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script> <!-- Mediapipe Pose lib -->
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.js"></script> <!-- Socket.IO client -->
+  <script src="client.js"></script>
+</body>
+</html>
