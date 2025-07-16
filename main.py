@@ -9,7 +9,7 @@ from keypoints_to_videos_script import keypoints_to_video
 from extract_frames_from_videos_script import extract_frames_from_videos
 from analyse_workout import analyse_workout_feedback_sequential
 
-def generate_keypoints():
+def generate_keypoints(exercise_name):
     load_dotenv()
 
     # Convert Videos -> 480p 5fps
@@ -58,7 +58,7 @@ def generate_keypoints():
     videos = [f for f in os.listdir(source_folder) if f.endswith(".mp4")]
     for video in videos:
         src_path = os.path.join(source_folder, video)
-        if video == "proper_crunches_480p_5fps.mp4":
+        if video.startswith(f"proper_{exercise_name}"):
             dst_path = os.path.join(reference_folder, video)
         else:
             dst_path = os.path.join(user_video_folder, video)
@@ -68,12 +68,20 @@ def generate_keypoints():
         except Exception as e:
             print(f"Error copying {video}: {e}")
 
-    reference_video = os.path.join(reference_folder, "proper_crunches_480p_5fps.mp4")
-    reference_keypoints = os.path.join(keypoint_folder, "proper_crunches_480p_5fps.npy")
+    reference_video = os.path.join(
+        reference_folder,
+        f"proper_{exercise_name}_480p_5fps.mp4"
+    )
+
+    reference_keypoints = os.path.join(
+        keypoint_folder,
+        f"proper_{exercise_name}_480p_5fps.npy"
+    )
+
     user_videos = glob.glob(os.path.join(user_video_folder, "*.mp4"))
 
     if not os.path.exists(reference_video):
-        print("Reference video 'proper_crunches_480p_5fps.mp4' not found!")
+        print("Reference video not found!")
         return
 
     if not os.path.exists(reference_keypoints):
@@ -96,7 +104,7 @@ def generate_keypoints():
 
 exercise_name = input("Enter the exercise name: ")
 
-generate_keypoints()
+generate_keypoints(exercise_name)
 keypoints_to_video()
 extract_frames_from_videos()
 
@@ -109,4 +117,4 @@ user_dirs = [
 
 output_dir = "workout_feedback"
 
-analyse_workout_feedback_sequential(reference_dir, user_dirs, exercise_name, output_dir)
+#analyse_workout_feedback_sequential(reference_dir, user_dirs, exercise_name, output_dir)
